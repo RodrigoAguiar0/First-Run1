@@ -1,0 +1,51 @@
+
+private void checkFirstRun() {
+
+final String PREFS_NAME = "MyPrefsFile";
+final String PREF_VERSION_CODE_KEY = "version_code";
+final int DOESNT_EXIST = -1;
+
+AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+
+alertDialog.setTitle("Título");
+alertDialog.setMessage(/*mensagem para aparecer na janela*/);
+alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+public void onClick(DialogInterface dialog, int which) {
+
+}
+});
+
+// Get current version code
+int currentVersionCode = 0;
+try {
+currentVersionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+} catch (android.content.pm.PackageManager.NameNotFoundException e) {
+// handle exception
+e.printStackTrace();
+return;
+}
+
+// Get saved version code
+SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
+
+// Check for first run or upgrade
+if (currentVersionCode == savedVersionCode) {
+
+// This is just a normal run
+return;
+
+} else if (savedVersionCode == DOESNT_EXIST) {
+
+alertDialog.show();
+
+} else if (currentVersionCode > savedVersionCode) {
+
+alertDialog.show();
+
+}
+
+// Update the shared preferences with the current version code
+prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).commit();
+
+}
